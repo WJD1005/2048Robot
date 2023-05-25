@@ -301,6 +301,9 @@ def move_right():
     return is_valid
 
 
+move_list = [move_up, move_down, move_left, move_right]  # 移动函数列表
+
+
 def judge():
     """
     判断游戏是否可以继续进行。
@@ -469,34 +472,24 @@ def game_run(screen):
             elif event.type == pygame.KEYDOWN:
                 # 上下左右
                 if event.key in [pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT]:
+                    direction = -1
                     if event.key == pygame.K_UP:
-                        # 移动有效才创建新方块和更新画面，避免无意义的更新画面
-                        if move_up():
-                            step += 1
-                            create_block()  # 移动后创建新方块
-                            draw_map(screen)  # 画地图
-                            show_info(screen)  # 显示信息
+                        direction = 0
                     elif event.key == pygame.K_DOWN:
-                        if move_down():
-                            step += 1
-                            create_block()  # 移动后创建新方块
-                            draw_map(screen)  # 画地图
-                            show_info(screen)  # 显示信息
+                        direction = 1
                     elif event.key == pygame.K_LEFT:
-                        if move_left():
-                            step += 1
-                            create_block()  # 移动后创建新方块
-                            draw_map(screen)  # 画地图
-                            show_info(screen)  # 显示信息
+                        direction = 2
                     elif event.key == pygame.K_RIGHT:
-                        if move_right():
-                            step += 1
-                            create_block()  # 移动后创建新方块
-                            draw_map(screen)  # 画地图
-                            show_info(screen)  # 显示信息
-                    # 判断游戏是否可以继续
-                    if not judge():
-                        game_over(screen)  # 游戏结束
+                        direction = 3
+                    # 移动有效才进行创建新方块、更新画面、判断是否可以继续
+                    if move_list[direction]():
+                        step += 1
+                        create_block()  # 移动后创建新方块
+                        draw_map(screen)  # 画地图
+                        show_info(screen)  # 显示信息
+                        # 判断游戏是否可以继续
+                        if not judge():
+                            game_over(screen)  # 游戏结束
                 # R重开
                 elif event.key == pygame.K_r:
                     restart_flag = True
