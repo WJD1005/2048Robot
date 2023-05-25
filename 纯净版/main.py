@@ -2,11 +2,14 @@ import pygame
 import sys
 import random
 
+# region 游戏核心数据
 map = []
 score = 0
 best_score = 0
 step = 0
+# endregion
 
+# region UI数据
 screen_width, screen_height = 575, 725  # 窗口尺寸
 padding = 50  # 窗口内边距
 text_width, text_height = 160, 30
@@ -42,8 +45,10 @@ block_style = {
     8192: ['#3c3a32', '#f9f6f2', 40],
     'super': ['#3c3a32', '#f9f6f2', 30],
 }
+# endregion
 
 
+# region 按钮类
 class Button(object):
     def __init__(self, x, y, width, height, color, text, font, font_color):
         self.x = x
@@ -69,6 +74,7 @@ class Button(object):
 
 
 button_dic = {}
+# endregion
 
 
 def game_init():
@@ -140,6 +146,7 @@ def create_block():
 def game_start(screen):
     """
     游戏开始。
+    :param screen: 窗口对象
     :return: 无
     """
     global map, score, step
@@ -148,11 +155,17 @@ def game_start(screen):
     score = 0
     step = 0
     create_init_block()  # 创建初始两方块
-    # 显示logo下方可变文本
-    show_text(screen, '关注星云质心谢谢喵')
+    # 显示初始内容
+    show_text(screen, '关注星云质心谢谢喵')  # 显示logo下方可变文本
+    draw_map(screen)  # 画地图
+    show_info(screen)  # 显示信息
 
 
 def move_up():
+    """
+    向上移动。
+    :return: True：移动有效，False：移动无效
+    """
     global map, score
     is_valid = False  # 是否有效移动标记
     # 提取一列
@@ -184,6 +197,10 @@ def move_up():
 
 
 def move_down():
+    """
+    向下移动。
+    :return: True：移动有效，False：移动无效
+    """
     global map, score
     is_valid = False  # 是否有效移动标记
     # 提取一列
@@ -215,6 +232,10 @@ def move_down():
 
 
 def move_left():
+    """
+    向左移动。
+    :return: True：移动有效，False：移动无效
+    """
     global map, score
     is_valid = False  # 是否有效移动标记
     # 提取一行
@@ -246,6 +267,10 @@ def move_left():
 
 
 def move_right():
+    """
+    向右移动。
+    :return: True：移动有效，False：移动无效
+    """
     global map, score
     is_valid = False  # 是否有效移动标记
     # 提取一行
@@ -277,6 +302,10 @@ def move_right():
 
 
 def judge():
+    """
+    判断游戏是否可以继续进行。
+    :return: True：可以继续，False：不可继续
+    """
     global map
     empty_list = get_empty()
     # 如果未满
@@ -297,12 +326,18 @@ def judge():
 
 
 def game_over(screen):
+    """
+    游戏结束。
+    :param screen: 窗口对象
+    :return: 无
+    """
     global score, best_score
     # 显示失败
     show_text(screen, '已经结束啦！')
     # 判断是否超过最高分并记录
     if score > best_score:
         best_score = score
+        show_info(screen)
         with open('BestScore.txt', 'w') as f:
             f.write(str(best_score))
 
@@ -343,6 +378,11 @@ def draw_map(screen):
 
 
 def show_info(screen):
+    """
+    显示游戏信息（分数、步数、最高分）。
+    :param screen: 窗口对象
+    :return: 无
+    """
     global score, step, best_score
     # 加载字体
     font_text = pygame.font.Font('Fonts/HarmonyOS_Sans_SC_Black.ttf', 15)
@@ -392,6 +432,12 @@ def show_info(screen):
 
 
 def show_text(screen, text):
+    """
+    显示logo下方的文本信息。
+    :param screen: 窗口对象
+    :param text: 文本
+    :return: 无
+    """
     # 定死字体，故文本不要太长
     font = pygame.font.Font('Fonts/HarmonyOS_Sans_SC_Black.ttf', 15)
     text_surface = pygame.Surface((text_width, text_height), flags=pygame.HWSURFACE)
@@ -404,7 +450,13 @@ def show_text(screen, text):
 
 
 def game_run(screen):
+    """
+    游戏运行主函数。
+    :param screen: 窗口对象
+    :return: 无
+    """
     global step, button_dic
+    game_start(screen)
     restart_flag = False
     while not restart_flag:
         # 循环获取事件，监听事件状态
@@ -418,21 +470,30 @@ def game_run(screen):
                 # 上下左右
                 if event.key in [pygame.K_UP, pygame.K_DOWN, pygame.K_LEFT, pygame.K_RIGHT]:
                     if event.key == pygame.K_UP:
+                        # 移动有效才创建新方块和更新画面，避免无意义的更新画面
                         if move_up():
                             step += 1
                             create_block()  # 移动后创建新方块
+                            draw_map(screen)  # 画地图
+                            show_info(screen)  # 显示信息
                     elif event.key == pygame.K_DOWN:
                         if move_down():
                             step += 1
                             create_block()  # 移动后创建新方块
+                            draw_map(screen)  # 画地图
+                            show_info(screen)  # 显示信息
                     elif event.key == pygame.K_LEFT:
                         if move_left():
                             step += 1
                             create_block()  # 移动后创建新方块
+                            draw_map(screen)  # 画地图
+                            show_info(screen)  # 显示信息
                     elif event.key == pygame.K_RIGHT:
                         if move_right():
                             step += 1
                             create_block()  # 移动后创建新方块
+                            draw_map(screen)  # 画地图
+                            show_info(screen)  # 显示信息
                     # 判断游戏是否可以继续
                     if not judge():
                         game_over(screen)  # 游戏结束
@@ -447,8 +508,6 @@ def game_run(screen):
                     restart_flag = True
                     break
 
-        draw_map(screen)  # 画地图
-        show_info(screen)  # 显示信息
         pygame.display.flip()  # 更新屏幕内容
 
 
@@ -457,7 +516,6 @@ def main():
     screen = game_init()  # 初始化游戏
     # 局循环
     while True:
-        game_start(screen)  # 开始游戏
         game_run(screen)  # 游戏运行
 
 
