@@ -477,6 +477,11 @@ def show_text(screen, text):
 
 
 def greedy_run(screen):
+    """
+    运行贪心算法。
+    :param screen: 窗口对象
+    :return: 无
+    """
     global map, step
     get_out_flag = False
     # 避免无法继续时误进入

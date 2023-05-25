@@ -186,6 +186,11 @@ def adjacent_check(map):
 
 
 def greedy_one_step(map):
+    """
+    输出贪心算法的结果。
+    :param map: 地图
+    :return: 移动方向，0:up, 1:down, 2:left, 3:right
+    """
     max_score = 0
     max_score_direction = -1
     valid_direction = []
@@ -202,4 +207,4 @@ def greedy_one_step(map):
         return max_score_direction
     # 无分数则随机一个有效移动方向
     else:
-        return random.choice(valid_direction)
+        return random.choice(valid_direction)  # 若已不能继续此处会报错，所以要避免不能继续时进来
