@@ -495,7 +495,7 @@ def game_run(screen):
                     restart_flag = True
                     break
             # 鼠标
-            if event.type == pygame.MOUSEBUTTONDOWN:
+            elif event.type == pygame.MOUSEBUTTONDOWN:
                 # 新游戏按钮
                 if button_dic['new_game_button'].click_check(event.pos):
                     restart_flag = True
