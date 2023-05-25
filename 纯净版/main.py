@@ -9,6 +9,7 @@ step = 0
 
 screen_width, screen_height = 575, 725  # 窗口尺寸
 padding = 50  # 窗口内边距
+text_width, text_height = 160, 30
 info_width, info_height = 90, 50  # 信息块尺寸
 button_width, button_height = 90, 30  # 按钮尺寸
 horizontal_margin = 10  # 水平边距
@@ -88,8 +89,6 @@ def game_init():
     logo_rect.x = padding
     logo_rect.y = padding - logo_rect.height + 70  # 去除字体上方空位的影响
     screen.blit(logo, logo_rect)
-    # 显示logo下方可变文本
-    show_text(screen, '关注星云质心谢谢喵')
     # 创建并显示按钮
     font = pygame.font.Font('Fonts/HarmonyOS_Sans_SC_Black.ttf', 20)  # 按钮字体，直接传入
     new_game_button = Button(screen_width - padding - button_width, padding + info_height + vertical_margin,
@@ -138,7 +137,7 @@ def create_block():
     map[block[0]][block[1]] = random.choice([2, 2, 2, 2, 2, 2, 2, 2, 2, 4])  # 出现2的概率是4的9倍
 
 
-def game_start():
+def game_start(screen):
     """
     游戏开始。
     :return: 无
@@ -149,6 +148,8 @@ def game_start():
     score = 0
     step = 0
     create_init_block()  # 创建初始两方块
+    # 显示logo下方可变文本
+    show_text(screen, '关注星云质心谢谢喵')
 
 
 def move_up():
@@ -295,8 +296,10 @@ def judge():
     return False
 
 
-def game_over():
+def game_over(screen):
     global score, best_score
+    # 显示失败
+    show_text(screen, '已经结束啦！')
     # 判断是否超过最高分并记录
     if score > best_score:
         best_score = score
@@ -391,11 +394,13 @@ def show_info(screen):
 def show_text(screen, text):
     # 定死字体，故文本不要太长
     font = pygame.font.Font('Fonts/HarmonyOS_Sans_SC_Black.ttf', 15)
+    text_surface = pygame.Surface((text_width, text_height), flags=pygame.HWSURFACE)
+    text_surface.fill(pygame.Color(background_color))
     text_render = font.render(text, True, font_color_dark)
     text_rect = text_render.get_rect()
-    text_rect.x = padding
-    text_rect.centery = padding + info_height + vertical_margin + button_height / 2
-    screen.blit(text_render, text_rect)
+    text_rect.centery = text_height / 2
+    text_surface.blit(text_render, text_rect)
+    screen.blit(text_surface, (padding, padding + info_height + vertical_margin))
 
 
 def game_run(screen):
@@ -430,8 +435,7 @@ def game_run(screen):
                             create_block()  # 移动后创建新方块
                     # 判断游戏是否可以继续
                     if not judge():
-                        game_over()  # 游戏结束
-                        print('失败')
+                        game_over(screen)  # 游戏结束
                 # R重开
                 elif event.key == pygame.K_r:
                     restart_flag = True
@@ -453,7 +457,7 @@ def main():
     screen = game_init()  # 初始化游戏
     # 局循环
     while True:
-        game_start()  # 开始游戏
+        game_start(screen)  # 开始游戏
         game_run(screen)  # 游戏运行
 
 
